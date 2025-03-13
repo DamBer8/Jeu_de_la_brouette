@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de la Brouette</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 1.1em;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Devinez le poids de la brouette !</h1>
+    
+    <form id="gameForm">
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required>
+
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom" required>
+
+        <label for="estimation">Estimation du poids (en kg) :</label>
+        <input type="number" id="estimation" name="estimation" step="0.001" required>
+
+        <button type="submit">Valider</button>
+    </form>
+
+    <p id="participantCount">Nombre de participants : 0</p>
+
+    <a id="downloadLink" style="display: none; margin-top: 20px;" download="participations.csv">Télécharger les résultats</a>
+
+    <script>
+        let data = [["Prénom", "Nom", "Estimation (kg)"]];
+        let participantCount = 0;
+
+        document.getElementById('gameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const prenom = document.getElementById('prenom').value;
+            const nom = document.getElementById('nom').value;
+            let estimation = document.getElementById('estimation').value;
+
+            // Supprimer la limitation du nombre de chiffres après la virgule
+            // estimation = parseFloat(estimation).toFixed(3);
+
+            data.push([prenom, nom, estimation]);
+            participantCount++;
+
+            document.getElementById('gameForm').reset();
+            updateCSV();
+            updateParticipantCount();
+        });
+
+        function updateCSV() {
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + data.map(row => row.join(",")).join("\n");
+
+            let encodedUri = encodeURI(csvContent);
+            let downloadLink = document.getElementById('downloadLink');
+            downloadLink.setAttribute("href", encodedUri);
+            downloadLink.style.display = "block";
+        }
+
+        function updateParticipantCount() {
+            document.getElementById('participantCount').textContent = "Nombre de participants : " + participantCount;
+        }
+    </script>
+
+</body>
+</html>
